@@ -23,3 +23,10 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+/.dbeaver-data-sources.xml
+/hs_err_pid2928.log
+/hs_err_pid5452.log
+/hs_err_pid7400.log
+/hs_err_pid8096.log
+/hs_err_pid8432.log
+/hs_err_pid8688.log
