@@ -5,6 +5,9 @@ import static javafx.application.Application.STYLESHEET_MODENA;
 
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -17,6 +20,7 @@ import javafx.stage.Stage;
 import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.FxmlUtils;
 
+@Component
 public class MainController {
 	static final String CREATE_ORDER_FXML = "/fxml/CreateOrder.fxml";
 	static final String ADD_PAPER_FXML = "/fxml/AddPaper.fxml";
@@ -28,10 +32,11 @@ public class MainController {
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
 	private Pane createOrderPane;
-
-    @FXML
+	@Autowired
+	AddPaperController ap;
+	
+	@FXML
     private void initialize() {
-        topMenuButtonsController.setMainController(this);
         createOrderPane = FxmlUtils.fxmlLoader(CREATE_ORDER_FXML);
     }
     

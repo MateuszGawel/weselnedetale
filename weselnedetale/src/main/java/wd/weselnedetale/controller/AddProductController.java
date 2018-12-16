@@ -1,5 +1,7 @@
 package wd.weselnedetale.controller;
 
+import org.springframework.stereotype.Component;
+
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -23,6 +25,7 @@ import wd.weselnedetale.model.fx.ProductFx;
 import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
+@Component
 public class AddProductController {
 
 	@FXML

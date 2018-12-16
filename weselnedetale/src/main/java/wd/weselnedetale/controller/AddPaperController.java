@@ -1,5 +1,7 @@
 package wd.weselnedetale.controller;
 
+import org.springframework.stereotype.Component;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
@@ -19,6 +21,7 @@ import wd.weselnedetale.model.fx.PaperFx;
 import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
+@Component
 public class AddPaperController {
 
 	@FXML

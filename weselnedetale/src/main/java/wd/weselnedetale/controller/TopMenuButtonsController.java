@@ -1,15 +1,16 @@
 package wd.weselnedetale.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 
+@Component
 public class TopMenuButtonsController {
 	
+	@Autowired
 	private MainController mainController;
-
-	public void setMainController(MainController mainController) {
-		this.mainController = mainController;
-	}
 	
 	@FXML
 	public void onCreateOrder(ActionEvent event) {

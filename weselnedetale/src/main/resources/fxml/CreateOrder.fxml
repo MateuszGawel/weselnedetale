@@ -128,7 +128,7 @@
       </HBox>
       <TableView fx:id="productOrderTableView" editable="true" prefHeight="186.0" prefWidth="1000.0">
         <columns>
-          <TableColumn fx:id="orderProductNameColumn" onEditCommit="#onEditName" prefWidth="75.0" text="%orderTable.name" />
+          <TableColumn fx:id="positionNameColumn" onEditCommit="#onEditName" prefWidth="75.0" text="%orderTable.name" />
             <TableColumn fx:id="weddingSetColumn" prefWidth="75.0" text="%orderTable.weddingSet" />
             <TableColumn fx:id="productNameColumn" prefWidth="75.0" text="%orderTable.productName" />
             <TableColumn fx:id="paperColumn" prefWidth="75.0" text="%orderTable.paper" />
@@ -145,7 +145,7 @@
          <contextMenu>
             <ContextMenu>
               <items>
-                <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeleteOrderProduct" text="%orderTable.menuItem.delete" />
+                <MenuItem fx:id="deleteMenuItem" mnemonicParsing="false" onAction="#onDeletePosition" text="%orderTable.menuItem.delete" />
               </items>
             </ContextMenu>
          </contextMenu>

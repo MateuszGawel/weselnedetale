@@ -1,6 +1,7 @@
 package wd.weselnedetale.controller;
 
 import org.controlsfx.control.CheckComboBox;
+import org.springframework.stereotype.Component;
 
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.ListChangeListener;
@@ -21,6 +22,7 @@ import wd.weselnedetale.model.fx.WeddingSetFx;
 import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
+@Component
 public class AddWeddingSetController {
 
 	@FXML

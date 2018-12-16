@@ -2,6 +2,8 @@ package wd.weselnedetale.controller;
 
 import java.text.NumberFormat;
 
+import org.springframework.stereotype.Component;
+
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -25,6 +27,7 @@ import wd.weselnedetale.utils.CalculationsUtils;
 import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
+@Component
 public class CreateOrderController {
 	@FXML
 	private TextField orderNameField;
@@ -202,7 +205,7 @@ public class CreateOrderController {
 	}
 
 	@FXML
-	public void onDeleteposition() {
+	public void onDeletePosition() {
 		addOrderModel.getPositionFxObservableList().remove(addOrderModel.getSelectedPosition());
 	}
 
