@@ -1,5 +1,7 @@
 package wd.weselnedetale.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
@@ -18,10 +20,10 @@ import wd.weselnedetale.database.dao.PaperDao;
 import wd.weselnedetale.database.model.Paper;
 import wd.weselnedetale.model.AddPaperModel;
 import wd.weselnedetale.model.fx.PaperFx;
-import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
 @Component
+@Scope("prototype")
 public class AddPaperController {
 
 	@FXML
@@ -44,19 +46,21 @@ public class AddPaperController {
 	private TableColumn<PaperFx, Number> widthColumn;
 	@FXML
 	private TableColumn<PaperFx, Number> heightColumn;
+	@FXML
+	private MenuItem deleteMenuItem;
 
 	private AddPaperModel addPaperModel;
-	@FXML MenuItem deleteMenuItem;
+	private PaperDao paperDao;
 	
+	@Autowired
+	public AddPaperController(AddPaperModel addPaperModel, PaperDao paperDao) {
+		this.addPaperModel = addPaperModel;
+		this.paperDao = paperDao;
+	}
+
 	@FXML
 	public void initialize() {
 		//TODO add paperSize table
-		addPaperModel = new AddPaperModel();
-		try {
-			addPaperModel.init();
-		} catch (ApplicationException e) {
-			DialogsUtils.errorDialog(e);
-		}
 		bindings();
 		initTable();
 	}
@@ -96,7 +100,11 @@ public class AddPaperController {
 		paperFx.setWidth(Integer.valueOf(paperWidthField.getText()));
 		paperFx.setHeight(Integer.valueOf(paperHeightField.getText()));
 		Paper paper = PaperConverter.convertToPaper(paperFx);
-		new PaperDao().createOrUpdate(paper);
+		try {
+			paperDao.createOrUpdate(paper);
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 		addPaperModel.addpaper(paperFx);
 		clearForm();
 	}
@@ -145,11 +153,19 @@ public class AddPaperController {
 	
 
 	private void updateInDatabase(PaperFx paperFx) {
-		new PaperDao().createOrUpdate(PaperConverter.convertToPaper(paperFx));
+		try {
+			paperDao.createOrUpdate(PaperConverter.convertToPaper(paperFx));
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void deleteFromDatabase(PaperFx paperFx) {
-		new PaperDao().delete(PaperConverter.convertToPaper(paperFx));
+		try {
+			paperDao.delete(PaperConverter.convertToPaper(paperFx));
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 	}
 
 

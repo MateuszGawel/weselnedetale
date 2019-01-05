@@ -1,79 +1,88 @@
-package wd.weselnedetale.database.dao;
+package wd.weselnedetale.database.dao.common;
 
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Repository;
 
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.dao.DaoManager;
 import com.j256.ormlite.logger.Logger;
 import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.stmt.QueryBuilder;
-import com.j256.ormlite.support.ConnectionSource;
 
 import wd.weselnedetale.database.model.BaseModel;
-import wd.weselnedetale.database.utils.DbManager;
+import wd.weselnedetale.database.utils.DbConnectionManager;
 import wd.weselnedetale.utils.FxmlUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
-public class CommonDao {
+@Repository
+public abstract class CommonDaoImpl<T extends BaseModel, I> implements CommonDao<T>{
+	
+    private static final Logger LOGGER = LoggerFactory.getLogger(CommonDaoImpl.class);
+    
+    private DbConnectionManager dbConnectionManager;
+    
+    @Autowired    
+    public CommonDaoImpl(DbConnectionManager dbConnectionManager) {
+		this.dbConnectionManager = dbConnectionManager;
+	}
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CommonDao.class);
-    protected final ConnectionSource connectionSource;
-
-    public CommonDao() {
-        this.connectionSource = DbManager.getConnectionSource();
-    }
-
-    public <T extends BaseModel, I> void createOrUpdate(BaseModel baseModel) throws ApplicationException {
+	@Override
+    public void createOrUpdate(T baseModel) throws ApplicationException {
         Dao<T, I> dao = getDao((Class<T>) baseModel.getClass());
         try {
-            dao.createOrUpdate((T) baseModel);
+            dao.createOrUpdate(baseModel);
         } catch (SQLException e) {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.create.update"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
     
-    public <T extends BaseModel, I> void update(BaseModel baseModel) throws ApplicationException {
+    @Override
+    public void update(T baseModel) throws ApplicationException {
         Dao<T, I> dao = getDao((Class<T>) baseModel.getClass());
         try {
-            dao.update((T) baseModel);
+            dao.update(baseModel);
         } catch (SQLException e) {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.update"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> void refresh(BaseModel baseModel) throws ApplicationException {
+    @Override
+    public void refresh(T baseModel) throws ApplicationException {
         try {
             Dao<T, I> dao = getDao((Class<T>) baseModel.getClass());
-            dao.refresh((T) baseModel);
+            dao.refresh(baseModel);
         } catch (SQLException e) {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.refresh"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> void delete(BaseModel baseModel) throws ApplicationException {
+    @Override
+    public void delete(T baseModel) throws ApplicationException {
         try {
             Dao<T, I> dao = getDao((Class<T>) baseModel.getClass());
-            dao.delete((T) baseModel);
+            dao.delete(baseModel);
         } catch (SQLException e) {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.delete"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> void deleteById(Class<T> cls, Integer id) throws ApplicationException {
+    @Override
+    public void deleteById(Class<T> cls, Object id) throws ApplicationException {
         try {
             Dao<T, I> dao = getDao(cls);
             dao.deleteById((I) id);
@@ -81,11 +90,12 @@ public class CommonDao {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.delete"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> T findById(Class<T> cls, Integer id) throws ApplicationException {
+    @Override
+    public T findById(Class<T> cls, Object id) throws ApplicationException {
         try {
             Dao<T, I> dao = getDao(cls);
             return dao.queryForId((I) id);
@@ -93,11 +103,12 @@ public class CommonDao {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.not.found"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> List<T> queryForAll(Class<T> cls) throws ApplicationException {
+    @Override
+    public List<T> queryForAll(Class<T> cls) throws ApplicationException {
         try {
             Dao<T, I> dao = getDao(cls);
             return dao.queryForAll();
@@ -105,32 +116,24 @@ public class CommonDao {
         	LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.not.found.all"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-
-    public <T extends BaseModel, I> Dao<T, I> getDao(Class<T> cls) throws ApplicationException {
+    protected Dao<T, I> getDao(Class<T> cls) throws ApplicationException {
         try {
-            return DaoManager.createDao(connectionSource, cls);
+            return DaoManager.createDao(dbConnectionManager.getConnectionSource(), cls);
         } catch (SQLException e) {
             LOGGER.error(e.getMessage());
             throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.get.dao"));
         } finally {
-            this.closeDbConnection();
+        	dbConnectionManager.closeConnectionSource();
         }
     }
 
-    public <T extends BaseModel, I> QueryBuilder<T, I> getQueryBuilder(Class<T> cls) throws ApplicationException {
+    protected QueryBuilder<T, I> getQueryBuilder(Class<T> cls) throws ApplicationException {
         Dao<T, I> dao = getDao(cls);
         return dao.queryBuilder();
     }
 
-    private void closeDbConnection() throws ApplicationException {
-        try {
-            this.connectionSource.close();
-        } catch (IOException e) {
-            throw new ApplicationException(FxmlUtils.getResourceBundle().getString("error.get.dao"));
-        }
-    }
 }

@@ -2,6 +2,7 @@ package wd.weselnedetale.controller;
 
 import java.text.NumberFormat;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javafx.fxml.FXML;
@@ -24,7 +25,6 @@ import wd.weselnedetale.model.fx.PositionFx;
 import wd.weselnedetale.model.fx.ProductFx;
 import wd.weselnedetale.model.fx.WeddingSetFx;
 import wd.weselnedetale.utils.CalculationsUtils;
-import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
 @Component
@@ -84,16 +84,11 @@ public class CreateOrderController {
 	@FXML
 	private MenuItem deleteMenuItem;
 	
+	@Autowired
 	private AddOrderModel addOrderModel;
-
+	
 	@FXML
 	public void initialize() {
-		addOrderModel = new AddOrderModel();
-		try {
-			addOrderModel.init();
-		} catch (ApplicationException e) {
-			DialogsUtils.errorDialog(e);
-		}
 		bindings();
 		initTable();
 	}

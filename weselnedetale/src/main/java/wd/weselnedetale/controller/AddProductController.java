@@ -1,5 +1,7 @@
 package wd.weselnedetale.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javafx.beans.value.ObservableValue;
@@ -22,10 +24,10 @@ import wd.weselnedetale.database.dao.ProductDao;
 import wd.weselnedetale.database.model.Product;
 import wd.weselnedetale.model.AddProductModel;
 import wd.weselnedetale.model.fx.ProductFx;
-import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
 @Component
+@Scope("prototype")
 public class AddProductController {
 
 	@FXML
@@ -60,15 +62,16 @@ public class AddProductController {
 	private MenuItem deleteMenuItem;
 	
 	private AddProductModel addProductModel;
+	private ProductDao productDao;
 	
+	@Autowired
+	public AddProductController(AddProductModel addProductModel, ProductDao productDao) {
+		this.addProductModel = addProductModel;
+		this.productDao = productDao;
+	}
+
 	@FXML
 	public void initialize() {
-		addProductModel = new AddProductModel();
-		try {
-			addProductModel.init();
-		} catch (ApplicationException e) {
-			DialogsUtils.errorDialog(e);
-		}
 		bindings();
 		initTable();
 	}
@@ -149,7 +152,11 @@ public class AddProductController {
 		}
 		
 		Product product = ProductConverter.convertToProduct(productFx);
-		new ProductDao().createOrUpdate(product);
+		try {
+			productDao.createOrUpdate(product);
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 		clearForm();
 		addProductModel.addProduct(productFx);
 	}
@@ -206,11 +213,19 @@ public class AddProductController {
 	
 
 	private void updateInDatabase(ProductFx productFx) {
-		new ProductDao().createOrUpdate(ProductConverter.convertToProduct(productFx));
+		try {
+			productDao.createOrUpdate(ProductConverter.convertToProduct(productFx));
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	private void deleteFromDatabase(ProductFx selectedProduct) {
-		new ProductDao().delete(ProductConverter.convertToProduct(selectedProduct));
+		try {
+			productDao.delete(ProductConverter.convertToProduct(selectedProduct));
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

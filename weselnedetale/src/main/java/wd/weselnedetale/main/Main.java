@@ -8,8 +8,6 @@ import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
-import wd.weselnedetale.database.utils.DbManager;
-import wd.weselnedetale.database.utils.FillDatabase;
 import wd.weselnedetale.utils.FxmlUtils;
 
 @SpringBootApplication
@@ -34,9 +32,6 @@ public class Main extends Application {
 		primaryStage.setScene(scene);
 		primaryStage.setTitle(FxmlUtils.getResourceBundle().getString("tittle.application"));
 		primaryStage.show();
-
-		DbManager.initDatabase();
-		FillDatabase.fillDatabase();
 	}
 
 	@Override

@@ -5,7 +5,6 @@ import static javafx.application.Application.STYLESHEET_MODENA;
 
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javafx.application.Application;
@@ -31,15 +30,14 @@ public class MainController {
 	private BorderPane borderPane;
     @FXML
     private TopMenuButtonsController topMenuButtonsController;
+    
 	private Pane createOrderPane;
-	@Autowired
-	AddPaperController ap;
 	
 	@FXML
     private void initialize() {
         createOrderPane = FxmlUtils.fxmlLoader(CREATE_ORDER_FXML);
     }
-    
+
 	public void setCenter(String fxmlPath) {
 		if(CREATE_ORDER_FXML.equals(fxmlPath)) {
 			borderPane.setCenter(createOrderPane);

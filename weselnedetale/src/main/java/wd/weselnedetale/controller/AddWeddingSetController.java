@@ -1,6 +1,8 @@
 package wd.weselnedetale.controller;
 
 import org.controlsfx.control.CheckComboBox;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import javafx.beans.property.SimpleStringProperty;
@@ -14,15 +16,17 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.TextFieldTableCell;
 import wd.weselnedetale.converter.WeddingSetConverter;
 import wd.weselnedetale.database.dao.WeddingSetDao;
+import wd.weselnedetale.database.dao.WeddingSet_PaperDao;
+import wd.weselnedetale.database.dao.WeddingSet_ProductDao;
 import wd.weselnedetale.database.model.WeddingSet;
 import wd.weselnedetale.model.AddWeddingSetModel;
 import wd.weselnedetale.model.fx.PaperFx;
 import wd.weselnedetale.model.fx.ProductFx;
 import wd.weselnedetale.model.fx.WeddingSetFx;
-import wd.weselnedetale.utils.DialogsUtils;
 import wd.weselnedetale.utils.exception.ApplicationException;
 
 @Component
+@Scope("prototype")
 public class AddWeddingSetController {
 
 	@FXML
@@ -48,16 +52,21 @@ public class AddWeddingSetController {
 	private MenuItem editMenuItem;
 
 	private AddWeddingSetModel addWeddingSetModel;
+	private WeddingSetDao weddingSetDao;
+	private WeddingSet_ProductDao weddingSet_ProductDao;
+	private WeddingSet_PaperDao weddingSet_PaperDao;
+	
+	@Autowired	
+	public AddWeddingSetController(AddWeddingSetModel addWeddingSetModel, WeddingSetDao weddingSetDao, WeddingSet_ProductDao weddingSet_ProductDao, WeddingSet_PaperDao weddingSet_PaperDao) {
+		this.addWeddingSetModel = addWeddingSetModel;
+		this.weddingSetDao = weddingSetDao;
+		this.weddingSet_ProductDao = weddingSet_ProductDao;
+		this.weddingSet_PaperDao = weddingSet_PaperDao;
+	}
 
 	@FXML
 	public void initialize() {
 		//TODO add model+some view to be able to display all papers on the same screen
-		addWeddingSetModel = new AddWeddingSetModel();
-		try {
-			addWeddingSetModel.init();
-		} catch (ApplicationException e) {
-			DialogsUtils.errorDialog(e);
-		}
 		bindings();
 		initTable();
 	}
@@ -113,8 +122,12 @@ public class AddWeddingSetController {
 		WeddingSet weddingSet = WeddingSetConverter.convertToWeddingSet(weddingSetFx);
 
 		weddingSet.setId(addWeddingSetModel.getSelectedWeddingSet().getId());
-		new WeddingSetDao().createOrUpdate(weddingSet);
-		addWeddingSetModel.initWeddingSetList();
+		weddingSetDao.createOrUpdate(weddingSet);
+		try {
+			addWeddingSetModel.initWeddingSetList();
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 
 		clearForm();
 	}
@@ -152,11 +165,18 @@ public class AddWeddingSetController {
 	}
 
 	private void updateInDatabase(WeddingSetFx weddingSetFx) {
-		new WeddingSetDao().createOrUpdate(WeddingSetConverter.convertToWeddingSet(weddingSetFx));
+		WeddingSet ws = WeddingSetConverter.convertToWeddingSet(weddingSetFx);
+		weddingSetDao.createOrUpdate(ws);
+		weddingSet_PaperDao.synchronizeWith(ws);
+		weddingSet_ProductDao.synchronizeWith(ws);
 	}
 
 	private void deleteFromDatabase(WeddingSetFx weddingSetFx) {
-		new WeddingSetDao().delete(WeddingSetConverter.convertToWeddingSet(weddingSetFx));
+		try {
+			weddingSetDao.delete(WeddingSetConverter.convertToWeddingSet(weddingSetFx));
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		}
 	}
 
 }
