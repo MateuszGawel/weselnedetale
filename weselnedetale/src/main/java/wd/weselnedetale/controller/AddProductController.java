@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
@@ -15,7 +14,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.CheckBoxTableCell;
 import javafx.scene.control.cell.TextFieldTableCell;
-import javafx.util.Callback;
 import javafx.util.converter.DoubleStringConverter;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
@@ -99,29 +97,23 @@ public class AddProductController {
 		nameColumn.setCellFactory(TextFieldTableCell.forTableColumn());
 		
 		printedColumn.setCellValueFactory(f -> f.getValue().getPrintedProperty());
-		printedColumn.setCellFactory(CheckBoxTableCell.forTableColumn(new Callback<Integer, ObservableValue<Boolean>>() {
-		    @Override
-		    public ObservableValue<Boolean> call(Integer param) {
-		        ProductFx productFx = addProductModel.getProductFxObservableList().get(param);
-		        updateInDatabase(productFx);
-		        if(productFx.isPrinted()) {
-		        	productFx.setPaperProduct(true);
-		        }
-		        return productFx.getPrintedProperty();
+		printedColumn.setCellFactory(CheckBoxTableCell.forTableColumn(p -> {
+		    ProductFx productFx = addProductModel.getProductFxObservableList().get(p);
+		    updateInDatabase(productFx);
+		    if(productFx.isPrinted()) {
+		    	productFx.setPaperProduct(true);
 		    }
+		    return productFx.getPrintedProperty();
 		}));
 		
 		paperProductColumn.setCellValueFactory(cellData -> cellData.getValue().getPaperProductProperty());
-		paperProductColumn.setCellFactory(CheckBoxTableCell.forTableColumn(new Callback<Integer, ObservableValue<Boolean>>() {
-		    @Override
-		    public ObservableValue<Boolean> call(Integer param) {
-		        ProductFx productFx = addProductModel.getProductFxObservableList().get(param);
-		        updateInDatabase(productFx);
-		        if(!productFx.isPaperProduct()) {
-		        	productFx.setPrinted(false);
-		        }
-		        return productFx.getPaperProductProperty();
+		paperProductColumn.setCellFactory(CheckBoxTableCell.forTableColumn(p -> {
+		    ProductFx productFx = addProductModel.getProductFxObservableList().get(p);
+		    updateInDatabase(productFx);
+		    if(!productFx.isPaperProduct()) {
+		    	productFx.setPrinted(false);
 		    }
+		    return productFx.getPaperProductProperty();
 		}));
 		
 		priceColumn.setCellValueFactory(cellData -> cellData.getValue().getPriceProperty());
@@ -154,11 +146,12 @@ public class AddProductController {
 		Product product = ProductConverter.convertToProduct(productFx);
 		try {
 			productDao.createOrUpdate(product);
+			clearForm();
+			productFx.setId(product.getId());
+			addProductModel.addProduct(productFx);
 		} catch (ApplicationException e) {
 			e.printStackTrace();
 		}
-		clearForm();
-		addProductModel.addProduct(productFx);
 	}
 
 	private void clearForm() {
