@@ -76,15 +76,15 @@ public class WeddingSet_PaperDaoImpl extends CommonDaoImpl<WeddingSet_Paper, Int
 			}
 			catch(IllegalStateException e) {
 				//TODO because key is unique. We dont need duplicated many to many rows. log this!
-			}
+			} 
 		});
 	}
 
-	private void removeNotRequiredPapers(WeddingSet ws) {
-		List<WeddingSet_Paper> weddingSetPapers = getByWeddingSet(ws);
+	private void removeNotRequiredPapers(WeddingSet weddingSet) {
+		List<WeddingSet_Paper> weddingSetPapers = getByWeddingSet(weddingSet);
 		
 		weddingSetPapers.forEach(wp -> {
-			if(!ws.getPapers().stream().filter(p -> p.equals(wp.getPaper())).findFirst().isPresent()) {
+			if(!weddingSet.getPapers().stream().filter(p -> p.equals(wp.getPaper())).findFirst().isPresent()) {
 				try {
 					deleteById(WeddingSet_Paper.class, wp.getId());
 				} catch (ApplicationException e) {

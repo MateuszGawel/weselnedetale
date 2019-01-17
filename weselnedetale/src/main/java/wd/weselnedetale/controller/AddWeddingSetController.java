@@ -66,7 +66,6 @@ public class AddWeddingSetController {
 
 	@FXML
 	public void initialize() {
-		//TODO add model+some view to be able to display all papers on the same screen
 		bindings();
 		initTable();
 	}
@@ -123,6 +122,8 @@ public class AddWeddingSetController {
 
 		weddingSet.setId(addWeddingSetModel.getSelectedWeddingSet().getId());
 		weddingSetDao.createOrUpdate(weddingSet);
+		weddingSet_PaperDao.synchronizeWith(weddingSet);
+		weddingSet_ProductDao.synchronizeWith(weddingSet);
 		try {
 			addWeddingSetModel.initWeddingSetList();
 		} catch (ApplicationException e) {

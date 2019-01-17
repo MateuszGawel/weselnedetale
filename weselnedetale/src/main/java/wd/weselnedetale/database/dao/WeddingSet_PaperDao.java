@@ -12,7 +12,7 @@ public interface WeddingSet_PaperDao extends CommonDao<WeddingSet_Paper>{
 	void deleteByPaper(Paper paper);
 
 	/**
-	 * @param removes all not necessary relations
+	 * @param removes/add all necessary relations
 	 */
 	void synchronizeWith(WeddingSet ws);
 
