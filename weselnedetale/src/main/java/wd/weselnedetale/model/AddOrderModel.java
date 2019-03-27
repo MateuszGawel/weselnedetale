@@ -37,6 +37,10 @@ public class AddOrderModel {
 	public AddOrderModel(WeddingSetDao weddingSetDao, ProductDao productDao) {
 		this.weddingSetDao = weddingSetDao;
 		this.productDao = productDao;
+		reload();
+	}
+
+	public void reload() {
 		try {
 			initWeddingSetList();
 		} catch (ApplicationException e) {
@@ -46,10 +50,11 @@ public class AddOrderModel {
 
 	private void initWeddingSetList() throws ApplicationException {
 		List<WeddingSet> weddingSets = weddingSetDao.queryForAll(WeddingSet.class);
-		weddingSetFxObservableList.clear();
 		weddingSets.forEach(w -> {
 			WeddingSetFx weddingSetFx = WeddingSetConverter.convertToWeddingSetFx(w);
-			weddingSetFxObservableList.add(weddingSetFx);
+			if(!weddingSetFxObservableList.contains(weddingSetFx)) {
+				weddingSetFxObservableList.add(weddingSetFx);
+			}
 		});
 	}
 

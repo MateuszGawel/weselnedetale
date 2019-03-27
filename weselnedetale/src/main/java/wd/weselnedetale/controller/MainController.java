@@ -3,6 +3,7 @@ package wd.weselnedetale.controller;
 import static javafx.application.Application.STYLESHEET_CASPIAN;
 import static javafx.application.Application.STYLESHEET_MODENA;
 
+import java.io.IOException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Component;
@@ -11,6 +12,7 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckMenuItem;
 import javafx.scene.layout.BorderPane;
@@ -32,14 +34,18 @@ public class MainController {
     private TopMenuButtonsController topMenuButtonsController;
     
 	private Pane createOrderPane;
+	private CreateOrderController createOrderController;
 	
 	@FXML
-    private void initialize() {
-        createOrderPane = FxmlUtils.fxmlLoader(CREATE_ORDER_FXML);
+    private void initialize() throws IOException {
+		FXMLLoader loader = FxmlUtils.getLoader(CREATE_ORDER_FXML);
+        createOrderPane = loader.load();
+        createOrderController = loader.getController();
     }
 
 	public void setCenter(String fxmlPath) {
 		if(CREATE_ORDER_FXML.equals(fxmlPath)) {
+			createOrderController.reloadWeddingSets();
 			borderPane.setCenter(createOrderPane);
 		}
 		else {

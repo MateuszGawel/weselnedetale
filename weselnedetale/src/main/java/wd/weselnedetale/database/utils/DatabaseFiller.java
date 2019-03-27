@@ -18,7 +18,7 @@ import wd.weselnedetale.utils.exception.ApplicationException;
 /**
  * Helper class to fill up database during development with dummy data
  */
-@Service
+@Service("databaseFiller")
 public class DatabaseFiller {
 	private WeddingSetDao weddingSetDao;
 	private ProductDao productDao;

@@ -20,6 +20,13 @@ public class FxmlUtils {
 		return null;
 	}
 	
+	public static FXMLLoader getLoader(String fxmlPath) {
+		FXMLLoader loader = new FXMLLoader(FxmlUtils.class.getResource(fxmlPath));
+		loader.setControllerFactory(Main.getSpringContext()::getBean);
+		loader.setResources(getResourceBundle());
+		return loader;
+	}
+	
 	public static ResourceBundle getResourceBundle() {
 		return ResourceBundle.getBundle("bundles.messages");
 	}

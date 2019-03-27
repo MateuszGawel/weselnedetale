@@ -92,8 +92,13 @@ public class CreateOrderController {
 		bindings();
 		initTable();
 	}
-
+	
+	public void reloadWeddingSets() {
+		addOrderModel.reload();
+	}
+	
 	private void bindings() {
+		reloadWeddingSets();
 		weddingSetComboBox.setItems(addOrderModel.getWeddingSetFxObservableList());
 		productComboBox.setItems(addOrderModel.getProductFxObservableList());
 		productComboBox.disableProperty().bind(weddingSetComboBox.valueProperty().isNull());

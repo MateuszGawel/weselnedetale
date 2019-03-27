@@ -56,4 +56,29 @@ public class WeddingSetFx {
 	public String toString() {
 		return getName();
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((idProperty == null) ? 0 : idProperty.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		WeddingSetFx other = (WeddingSetFx) obj;
+		if (idProperty == null) {
+			if (other.idProperty != null)
+				return false;
+		} else if (idProperty.get() != other.idProperty.get())
+			return false;
+		return true;
+	}
 }

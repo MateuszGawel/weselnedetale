@@ -30,7 +30,7 @@ public class Main extends Application {
 		Pane borderPane = FxmlUtils.fxmlLoader(BORDER_PANE_MAIN_FXML);
 		Scene scene = new Scene(borderPane);
 		primaryStage.setScene(scene);
-		primaryStage.setTitle(FxmlUtils.getResourceBundle().getString("tittle.application"));
+		primaryStage.setTitle(FxmlUtils.getResourceBundle().getString("title.application"));
 		primaryStage.show();
 	}
 
