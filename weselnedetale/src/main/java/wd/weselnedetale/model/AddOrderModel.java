@@ -71,7 +71,9 @@ public class AddOrderModel {
 	
 	public void fillPaperList(WeddingSetFx weddingSetFx) throws ApplicationException {
 		paperFxObservableList.clear();
-		paperFxObservableList.addAll(weddingSetFx.getPaperFxObservableList());
+		if(weddingSetFx != null) {
+			paperFxObservableList.addAll(weddingSetFx.getPaperFxObservableList());
+		}
 
 	}
 
@@ -89,6 +91,10 @@ public class AddOrderModel {
 
 	public void addPosition(PositionFx positionFx) {
 		positionFxObservableList.add(positionFx);
+	}
+	
+	public void clearPositions() {
+		positionFxObservableList.clear();
 	}
 
 	public SimpleObjectProperty<PositionFx> getSelectedPositionProperty() {

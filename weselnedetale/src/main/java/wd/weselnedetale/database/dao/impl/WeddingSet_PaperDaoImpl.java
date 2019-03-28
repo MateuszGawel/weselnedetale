@@ -1,4 +1,4 @@
-package wd.weselnedetale.database.dao;
+package wd.weselnedetale.database.dao.impl;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -9,6 +9,8 @@ import org.springframework.stereotype.Repository;
 import com.j256.ormlite.dao.Dao;
 import com.j256.ormlite.stmt.DeleteBuilder;
 
+import wd.weselnedetale.database.dao.WeddingSetDao;
+import wd.weselnedetale.database.dao.WeddingSet_PaperDao;
 import wd.weselnedetale.database.dao.common.CommonDaoImpl;
 import wd.weselnedetale.database.model.Paper;
 import wd.weselnedetale.database.model.WeddingSet;

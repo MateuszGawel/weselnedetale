@@ -1,8 +1,10 @@
-package wd.weselnedetale.database.dao;
+package wd.weselnedetale.database.dao.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import wd.weselnedetale.database.dao.ProductDao;
+import wd.weselnedetale.database.dao.WeddingSet_ProductDao;
 import wd.weselnedetale.database.dao.common.CommonDaoImpl;
 import wd.weselnedetale.database.model.Product;
 import wd.weselnedetale.database.utils.DbConnectionManager;

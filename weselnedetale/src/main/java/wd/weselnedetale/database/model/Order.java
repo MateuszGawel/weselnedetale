@@ -5,7 +5,7 @@ import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
 import com.j256.ormlite.table.DatabaseTable;
 
-@DatabaseTable(tableName = "ORDER_PRODUCT")
+@DatabaseTable(tableName = "ORDER")
 public class Order implements BaseModel {
 	public Order() {
 	}

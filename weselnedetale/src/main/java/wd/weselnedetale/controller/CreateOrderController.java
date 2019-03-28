@@ -18,6 +18,11 @@ import javafx.scene.control.TextFormatter;
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.converter.IntegerStringConverter;
 import javafx.util.converter.NumberStringConverter;
+import wd.weselnedetale.converter.PositionConverter;
+import wd.weselnedetale.database.dao.OrderDao;
+import wd.weselnedetale.database.dao.PositionDao;
+import wd.weselnedetale.database.model.Order;
+import wd.weselnedetale.database.model.Position;
 import wd.weselnedetale.main.ConfigurationKeys;
 import wd.weselnedetale.model.AddOrderModel;
 import wd.weselnedetale.model.fx.PaperFx;
@@ -84,9 +89,17 @@ public class CreateOrderController {
 	@FXML
 	private MenuItem deleteMenuItem;
 	
-	@Autowired
 	private AddOrderModel addOrderModel;
+	private PositionDao positionDao;
+	private OrderDao orderDao;
 	
+	@Autowired
+	public CreateOrderController(AddOrderModel addOrderModel, PositionDao positionDao, OrderDao orderDao) {
+		this.addOrderModel = addOrderModel;
+		this.positionDao = positionDao;
+		this.orderDao = orderDao;
+	}
+
 	@FXML
 	public void initialize() {
 		bindings();
@@ -101,6 +114,7 @@ public class CreateOrderController {
 		reloadWeddingSets();
 		weddingSetComboBox.setItems(addOrderModel.getWeddingSetFxObservableList());
 		productComboBox.setItems(addOrderModel.getProductFxObservableList());
+		paperComboBox.setItems(addOrderModel.getPaperFxObservableList());
 		productComboBox.disableProperty().bind(weddingSetComboBox.valueProperty().isNull());
 		addButton.disableProperty().bind(productNameField.textProperty().isEmpty().or(productComboBox.valueProperty().isNull()));
 		amountField.setTextFormatter(new TextFormatter<>(new IntegerStringConverter()));
@@ -155,7 +169,6 @@ public class CreateOrderController {
 
 	@FXML
 	public void onWeddingSetChange() throws ApplicationException {
-		paperComboBox.setItems(weddingSetComboBox.getValue().getPaperFxObservableList());
 		if(!isSpecialCheckBox.isSelected()) {
 			addOrderModel.fillProductList(weddingSetComboBox.getValue());
 			addOrderModel.fillPaperList(weddingSetComboBox.getValue());
@@ -173,13 +186,20 @@ public class CreateOrderController {
 		positionFx.setProduct(productComboBox.getValue());
 		positionFx.setAmount(amountField.getText().isEmpty() ? 1 : Integer.valueOf(amountField.getText()));
 		positionFx.setPaper(paperComboBox.getValue());
-		//TODO dont calculate for not paper products
-		calculatepositionValues(positionFx);
+		if(productComboBox.getValue().isPaperProduct()) {
+			calculatepositionValues(positionFx);
+		}
 		addOrderModel.addPosition(positionFx);
-		//TODO save in database
+		clearSinglePositionFields();
+	}
+
+	private void clearSinglePositionFields() {
 		productComboBox.setValue(null);
-		productNameField.setText("");
 		paperComboBox.setValue(null);
+		isDummyCheckBox.setSelected(false);
+		isPersonalizedCheckBox.setSelected(false);
+		isSpecialCheckBox.setSelected(false);
+		productNameField.clear();
 	}
 
 	private void calculatepositionValues(PositionFx positionFx) {
@@ -211,33 +231,73 @@ public class CreateOrderController {
 
 	@FXML
 	public void onSpecialSelected() throws ApplicationException {
+		ProductFx value = productComboBox.getValue();
 		if(isSpecialCheckBox.isSelected()) {
 			addOrderModel.fillProductList(null);
 		}
 		else {
 			addOrderModel.fillProductList(weddingSetComboBox.getValue());
 		}
+		productComboBox.setValue(value);
 	}
 
 	@FXML
 	public void onProductChange() {
-		boolean paperProduct = productComboBox.getValue().isPaperProduct();
-		paperComboBox.setDisable(!paperProduct);
+		if(productComboBox.getValue() != null) {
+			boolean paperProduct = productComboBox.getValue().isPaperProduct();
+			paperComboBox.setDisable(!paperProduct);
+		}
+		else {
+			paperComboBox.setDisable(true);
+		}
 	}
 
-	@FXML public void onLoad() {
+	@FXML
+	public void onLoad() {
 		//TODO show modal view with list of orders ordered by date + buttons load/generate/delete
 	}
 
-	@FXML public void onSave() {
-		//TODO save to DB and clear form
+	@FXML
+	public void onSave() {
+		Order order = new Order();
+		order.setName(orderNameField.getText());
+		
+		try {
+			orderDao.createOrUpdate(order);
+		} catch (ApplicationException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
+		addOrderModel.getPositionFxObservableList().forEach(p -> {
+			try {
+				Position position = PositionConverter.convertToPosition(p);
+				position.setOrder(order);
+				positionDao.createOrUpdate(position);
+			} catch (ApplicationException e) {
+				e.printStackTrace();
+				return;
+			}
+		});
+		clearSinglePositionFields();
+		clearOrderFields();
 	}
 
-	@FXML public void onClear() {
-		//TODO clear form
+	@FXML
+	public void onClear() {
+		clearSinglePositionFields();
+		clearOrderFields();
 	}
 
-	@FXML public void onGenerateFile() {
+	private void clearOrderFields() {
+		addOrderModel.clearPositions();
+		orderNameField.clear();
+		weddingSetComboBox.setValue(null);
+		amountField.clear();
+	}
+
+	@FXML
+	public void onGenerateFile() {
 		//TODO export file to hergon
 	}
 

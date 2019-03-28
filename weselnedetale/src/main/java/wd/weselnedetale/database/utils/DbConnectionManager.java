@@ -11,6 +11,7 @@ import com.j256.ormlite.logger.LoggerFactory;
 import com.j256.ormlite.support.ConnectionSource;
 import com.j256.ormlite.table.TableUtils;
 
+import wd.weselnedetale.database.model.Order;
 import wd.weselnedetale.database.model.Paper;
 import wd.weselnedetale.database.model.Position;
 import wd.weselnedetale.database.model.Product;
@@ -74,6 +75,7 @@ public class DbConnectionManager {
 			TableUtils.createTableIfNotExists(connectionSource, Paper.class);
 			TableUtils.createTableIfNotExists(connectionSource, Product.class);
 			TableUtils.createTableIfNotExists(connectionSource, WeddingSet_Paper.class);
+			TableUtils.createTableIfNotExists(connectionSource, Order.class);
 		} catch (SQLException e) {
 			LOGGER.warn(e.getMessage());
 		}
@@ -88,6 +90,7 @@ public class DbConnectionManager {
 			TableUtils.dropTable(connectionSource, Paper.class, true);
 			TableUtils.dropTable(connectionSource, Product.class, true);
 			TableUtils.dropTable(connectionSource, WeddingSet_Paper.class, true);
+			TableUtils.dropTable(connectionSource, Order.class, true);
 		} catch (SQLException e) {
 			LOGGER.warn(e.getMessage());
 		}

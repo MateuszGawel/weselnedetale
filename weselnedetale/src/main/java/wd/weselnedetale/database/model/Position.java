@@ -26,6 +26,9 @@ public class Position implements BaseModel {
 	@DatabaseField(foreign = true)
 	private Paper paper;
 	
+	@DatabaseField(foreign = true)
+	private Order order;
+	
 
 	public int getId() {
 		return id;
@@ -73,5 +76,13 @@ public class Position implements BaseModel {
 
 	public void setPaper(Paper paper) {
 		this.paper = paper;
+	}
+
+	public Order getOrder() {
+		return order;
+	}
+
+	public void setOrder(Order order) {
+		this.order = order;
 	}
 }
